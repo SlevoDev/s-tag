@@ -1,6 +1,6 @@
 "use client";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import TopBar from "../../components/TopBar";
 import PhotoPicker from "../../components/PhotoPicker";
@@ -9,8 +9,18 @@ import { useToast } from "../../components/Toast";
 import { useGeolocation, hasGeoConsent } from "../../lib/use-geolocation";
 import { useTranslation } from "../../lib/i18n";
 
-export default function NyGjenstandPage() {
+export default function NyGjenstandPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <NyGjenstandPage />
+    </Suspense>
+  );
+}
+
+function NyGjenstandPage() {
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const prefilledUid = (searchParams.get("chipUid") || "").trim().toUpperCase();
 
   const CATEGORIES = [
     { id: "electronics", label: t("kartotekNy.catElectronics"), icon: "devices" },
@@ -33,7 +43,7 @@ export default function NyGjenstandPage() {
   const [loading, setLoading] = useState(false);
   const [showMore, setShowMore] = useState(false);
 
-  const [stagCode, setStagCode] = useState("");
+  const [stagCode, setStagCode] = useState(prefilledUid);
   const [codeStatus, setCodeStatus] = useState<
     "idle" | "checking" | "available" | "taken" | "invalid"
   >("idle");

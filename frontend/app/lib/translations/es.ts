@@ -440,6 +440,45 @@ const es: Record<string, string> = {
   "contact.privacy": "Privacidad",
   "contact.terms": "Terminos",
   "contact.home": "Inicio",
+
+  // Emparejar (chip NFC por URL o entrada manual)
+  "pare.title": "Registrar chip S-TAG",
+  "pare.subtitle": "El chip est\u00e1 listo para vincularse a uno de tus objetos.",
+  "pare.chipUid": "ID del chip",
+  "pare.createNew": "Crear nuevo objeto",
+  "pare.createNewSub": "Registra el objeto y vincula el chip en el mismo paso",
+  "pare.orPairExisting": "O vincular a un objeto existente",
+  "pare.noUnpaired": "Todos tus objetos ya tienen un chip. Crea un nuevo objeto para usar este chip.",
+  "pare.invalidTitle": "Enlace no v\u00e1lido",
+  "pare.invalidBody": "Al enlace le falta un ID de chip v\u00e1lido. Aseg\u00farate de haber escaneado la etiqueta completa, o contacta al soporte de S-TAG si el problema persiste.",
+  "pare.goHome": "Ir al inicio",
+  "pare.successTitle": "Chip registrado",
+  "pare.successBody": "El chip ahora est\u00e1 vinculado a \u00ab{0}\u00bb. Puedes ver el objeto en tu registro.",
+  "pare.successToast": "Chip registrado",
+  "pare.viewItem": "Ver objeto",
+  "pare.help": "Conectado como {0}. \u00bfNecesitas ayuda? Ve a Contacto en el men\u00fa.",
+
+  // Modal de emparejamiento (manual/NFC desde detalle del objeto)
+  "pareModal.title": "Vincular chip",
+  "pareModal.subtitle": "Acerca tu tel\u00e9fono al chip o introduce el ID del chip manualmente.",
+  "pareModal.scanNfc": "Escanear chip con NFC",
+  "pareModal.scanning": "Esperando el chip \u2026",
+  "pareModal.scanningHint": "Acerca tu tel\u00e9fono al chip.",
+  "pareModal.scanFailed": "No se pudo leer el chip. Int\u00e9ntalo de nuevo o introduce el ID manualmente.",
+  "pareModal.nfcUnsupported": "El escaneo NFC no est\u00e1 disponible en este navegador.",
+  "pareModal.manualLabel": "ID del chip",
+  "pareModal.manualPlaceholder": "Ej. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Letras y n\u00fameros, m\u00ednimo 4 caracteres. Normalmente el ID aparece en el embalaje o la etiqueta.",
+  "pareModal.tooShort": "El ID del chip debe tener al menos 4 caracteres.",
+  "pareModal.pair": "Vincular",
+  "pareModal.pairing": "Vinculando \u2026",
+  "pareModal.success": "Chip vinculado",
+
+  // Tarjeta de emparejamiento en detalle del objeto
+  "detalj.pair.label": "Chip S-TAG",
+  "detalj.pair.title": "Ning\u00fan chip registrado",
+  "detalj.pair.info": "A\u00f1ade un chip S-TAG para activar el seguimiento en vivo y las alertas de geovalla para este objeto.",
+  "detalj.pair.cta": "Vincular chip",
 };
 
 export default es;

@@ -1,8 +1,8 @@
 "use client";
-import { useState, FormEvent, ReactNode } from "react";
+import { Suspense, useState, FormEvent, ReactNode } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "../lib/auth-context";
 import { useTranslation } from "../lib/i18n";
@@ -13,10 +13,28 @@ import OAuthButtons from "../components/OAuthButtons";
 type Step = "form" | "permission";
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
-export default function RegisterPage() {
+function sanitizeNext(raw: string | null): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/")) return null;
+  if (raw.startsWith("//")) return null;
+  return raw;
+}
+
+export default function RegisterPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterPage />
+    </Suspense>
+  );
+}
+
+function RegisterPage() {
   const { setUser } = useAuth();
   const { t } = useTranslation();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const next = sanitizeNext(searchParams.get("next")) || "/hjem";
+  const loginHref = next !== "/hjem" ? `/logg-inn?next=${encodeURIComponent(next)}` : "/logg-inn";
 
   const [step, setStep] = useState<Step>("form");
   const [name, setName] = useState("");
@@ -59,7 +77,7 @@ export default function RegisterPage() {
     } catch {
       /* stille — ikke blokker onboarding på API-feil */
     }
-    router.replace("/hjem");
+    router.replace(next);
   }
 
   async function handleSkip() {
@@ -69,7 +87,7 @@ export default function RegisterPage() {
     } catch {
       /* stille */
     }
-    router.replace("/hjem");
+    router.replace(next);
   }
 
   return (
@@ -163,6 +181,7 @@ export default function RegisterPage() {
                   mode="register"
                   requireAccept
                   accepted={acceptTerms}
+                  redirectTo={next}
                   onRegistered={(u) => {
                     setSavedFirstName(u.name.split(" ")[0] || "");
                     setStep("permission");
@@ -171,7 +190,7 @@ export default function RegisterPage() {
               </div>
               <p className="mt-6 text-center text-sm text-slate-500">
                 {t("register.hasAccount")}{" "}
-                <Link href="/logg-inn" className="text-[#0f2a5c] font-bold hover:underline">
+                <Link href={loginHref} className="text-[#0f2a5c] font-bold hover:underline">
                   {t("register.login")}
                 </Link>
               </p>

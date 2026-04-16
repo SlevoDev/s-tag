@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import dynamic from "next/dynamic";
 import TopBar from "../../components/TopBar";
 import PhotoPicker from "../../components/PhotoPicker";
+import PairChipModal from "./PairChipModal";
 import { items as itemsApi, ItemEvent, Item, FoundReport, API_BASE } from "../../lib/api";
 import { useAuth } from "../../lib/auth-context";
 import { useToast } from "../../components/Toast";
@@ -46,6 +47,7 @@ function ItemDetailPage() {
   const [photoEdit, setPhotoEdit] = useState<string | null>(null);
   const [toggling, setToggling] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [pairOpen, setPairOpen] = useState(false);
 
   const statusMeta = {
     secured: { label: t("common.secured"), color: "text-emerald-700", bg: "bg-emerald-50", dot: "bg-emerald-500", icon: "verified" },
@@ -362,6 +364,39 @@ function ItemDetailPage() {
           )}
         </div>
 
+        {/* Pare chip — vises når ingen chip er registrert */}
+        {item.chipStatus === "unpaired" && (
+          <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
+            <div className="flex items-center gap-3 mb-3">
+              <div className="w-10 h-10 rounded-xl bg-[#0f2a5c]/10 flex items-center justify-center">
+                <span
+                  className="material-symbols-outlined text-[#0f2a5c]"
+                  style={{ fontVariationSettings: "'FILL' 1" }}
+                >
+                  nfc
+                </span>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+                  {t("detalj.pair.label")}
+                </p>
+                <p className="text-slate-900 font-bold text-sm">{t("detalj.pair.title")}</p>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-500 mb-3 leading-relaxed">
+              {t("detalj.pair.info")}
+            </p>
+            <button
+              type="button"
+              onClick={() => setPairOpen(true)}
+              className="w-full py-3 rounded-2xl bg-[#0f2a5c] text-white font-bold text-sm hover:bg-[#1a3d7c] transition flex items-center justify-center gap-2"
+            >
+              <span className="material-symbols-outlined text-lg">add_link</span>
+              {t("detalj.pair.cta")}
+            </button>
+          </div>
+        )}
+
         {/* S-TAG chip (innstøpt av produsent) — kun synlig når chip finnes */}
         {item.chipStatus !== "unpaired" && (
         <div className="bg-white border border-slate-200 rounded-2xl p-5 mb-4 shadow-sm">
@@ -496,6 +531,22 @@ function ItemDetailPage() {
           </button>
         </div>
       </main>
+      <PairChipModal
+        itemId={item.id}
+        open={pairOpen}
+        onClose={() => setPairOpen(false)}
+        onPaired={async () => {
+          setPairOpen(false);
+          toast.success(t("pareModal.success"));
+          try {
+            await refreshItem();
+            const ev = await itemsApi.events(id);
+            setEvents(ev);
+          } catch {
+            /* stille — siden blir frisket ved neste navigasjon */
+          }
+        }}
+      />
     </>
   );
 }

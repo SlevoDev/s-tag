@@ -440,6 +440,45 @@ const fr: Record<string, string> = {
   "contact.privacy": "Confidentialit\u00e9",
   "contact.terms": "Conditions",
   "contact.home": "Accueil",
+
+  // Associer (puce NFC via tag URL ou saisie manuelle)
+  "pare.title": "Enregistrer une puce S-TAG",
+  "pare.subtitle": "La puce est pr\u00eate \u00e0 \u00eatre associ\u00e9e \u00e0 l\u2019un de vos objets.",
+  "pare.chipUid": "ID de la puce",
+  "pare.createNew": "Cr\u00e9er un nouvel objet",
+  "pare.createNewSub": "Enregistrez l\u2019objet et associez la puce en une seule \u00e9tape",
+  "pare.orPairExisting": "Ou associer \u00e0 un objet existant",
+  "pare.noUnpaired": "Tous vos objets ont d\u00e9j\u00e0 une puce. Cr\u00e9ez un nouvel objet pour utiliser cette puce.",
+  "pare.invalidTitle": "Lien invalide",
+  "pare.invalidBody": "Il manque un ID de puce valide dans le lien. V\u00e9rifiez que vous avez bien scann\u00e9 toute l\u2019\u00e9tiquette, ou contactez l\u2019assistance S-TAG si le probl\u00e8me persiste.",
+  "pare.goHome": "Aller \u00e0 l\u2019accueil",
+  "pare.successTitle": "Puce enregistr\u00e9e",
+  "pare.successBody": "La puce est maintenant associ\u00e9e \u00e0 \u00ab {0} \u00bb. Vous pouvez voir l\u2019objet dans votre registre.",
+  "pare.successToast": "Puce enregistr\u00e9e",
+  "pare.viewItem": "Voir l\u2019objet",
+  "pare.help": "Connect\u00e9 en tant que {0}. Besoin d\u2019aide ? Allez dans Contact dans le menu.",
+
+  // Modale d\u2019association (manuel/NFC depuis le d\u00e9tail de l\u2019objet)
+  "pareModal.title": "Associer une puce",
+  "pareModal.subtitle": "Approchez votre t\u00e9l\u00e9phone de la puce ou saisissez l\u2019ID manuellement.",
+  "pareModal.scanNfc": "Scanner la puce avec NFC",
+  "pareModal.scanning": "En attente de la puce \u2026",
+  "pareModal.scanningHint": "Approchez votre t\u00e9l\u00e9phone pr\u00e8s de la puce.",
+  "pareModal.scanFailed": "Impossible de lire la puce. R\u00e9essayez ou saisissez l\u2019ID manuellement.",
+  "pareModal.nfcUnsupported": "Le scan NFC n\u2019est pas disponible dans ce navigateur.",
+  "pareModal.manualLabel": "ID de la puce",
+  "pareModal.manualPlaceholder": "Ex. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Lettres et chiffres, 4 caract\u00e8res minimum. L\u2019ID figure g\u00e9n\u00e9ralement sur l\u2019emballage ou l\u2019\u00e9tiquette.",
+  "pareModal.tooShort": "L\u2019ID de la puce doit contenir au moins 4 caract\u00e8res.",
+  "pareModal.pair": "Associer",
+  "pareModal.pairing": "Association \u2026",
+  "pareModal.success": "Puce associ\u00e9e",
+
+  // Carte d\u2019association sur le d\u00e9tail de l\u2019objet
+  "detalj.pair.label": "Puce S-TAG",
+  "detalj.pair.title": "Aucune puce enregistr\u00e9e",
+  "detalj.pair.info": "Ajoutez une puce S-TAG pour activer le suivi en direct et les alertes de g\u00e9orep\u00e9rage pour cet objet.",
+  "detalj.pair.cta": "Associer la puce",
 };
 
 export default fr;

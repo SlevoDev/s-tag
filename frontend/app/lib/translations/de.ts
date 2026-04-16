@@ -440,6 +440,45 @@ const de: Record<string, string> = {
   "contact.privacy": "Datenschutz",
   "contact.terms": "Nutzungsbedingungen",
   "contact.home": "Startseite",
+
+  // Pair (NFC-Chip per URL-Tag oder manuelle Eingabe)
+  "pare.title": "S-TAG-Chip registrieren",
+  "pare.subtitle": "Der Chip ist bereit, mit einem deiner Gegenst\u00e4nde verkn\u00fcpft zu werden.",
+  "pare.chipUid": "Chip-ID",
+  "pare.createNew": "Neuen Gegenstand anlegen",
+  "pare.createNewSub": "Gegenstand registrieren und Chip in einem Schritt verkn\u00fcpfen",
+  "pare.orPairExisting": "Oder mit bestehendem verkn\u00fcpfen",
+  "pare.noUnpaired": "Alle deine Gegenst\u00e4nde haben bereits einen Chip. Lege einen neuen Gegenstand an, um diesen Chip zu verwenden.",
+  "pare.invalidTitle": "Ung\u00fcltiger Link",
+  "pare.invalidBody": "Dem Link fehlt eine g\u00fcltige Chip-ID. Pr\u00fcfe, ob du den ganzen Tag gescannt hast, oder wende dich an den S-TAG-Support, falls das Problem bestehen bleibt.",
+  "pare.goHome": "Zur Startseite",
+  "pare.successTitle": "Chip registriert",
+  "pare.successBody": "Der Chip ist jetzt mit \u201e{0}\u201c verkn\u00fcpft. Du kannst den Gegenstand in deinem Register sehen.",
+  "pare.successToast": "Chip registriert",
+  "pare.viewItem": "Gegenstand anzeigen",
+  "pare.help": "Angemeldet als {0}. Brauchst du Hilfe? Gehe im Men\u00fc zu Kontakt.",
+
+  // Pair-Modal (manuelles/NFC-Koppeln aus der Gegenstandsdetailansicht)
+  "pareModal.title": "Chip verkn\u00fcpfen",
+  "pareModal.subtitle": "Halte dein Telefon an den Chip oder gib die Chip-ID manuell ein.",
+  "pareModal.scanNfc": "Chip mit NFC scannen",
+  "pareModal.scanning": "Warte auf Chip \u2026",
+  "pareModal.scanningHint": "Halte dein Telefon nah an den Chip.",
+  "pareModal.scanFailed": "Chip konnte nicht gelesen werden. Versuche es erneut oder gib die ID manuell ein.",
+  "pareModal.nfcUnsupported": "NFC-Scannen ist in diesem Browser nicht verf\u00fcgbar.",
+  "pareModal.manualLabel": "Chip-ID",
+  "pareModal.manualPlaceholder": "z. B. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Buchstaben und Zahlen, mindestens 4 Zeichen. Die ID steht meist auf der Verpackung oder dem Etikett.",
+  "pareModal.tooShort": "Chip-ID muss mindestens 4 Zeichen lang sein.",
+  "pareModal.pair": "Verkn\u00fcpfen",
+  "pareModal.pairing": "Verkn\u00fcpfe \u2026",
+  "pareModal.success": "Chip verkn\u00fcpft",
+
+  // Pair-Karte in der Gegenstandsdetailansicht
+  "detalj.pair.label": "S-TAG-Chip",
+  "detalj.pair.title": "Kein Chip registriert",
+  "detalj.pair.info": "F\u00fcge einen S-TAG-Chip hinzu, um Live-Tracking und Geofence-Warnungen f\u00fcr diesen Gegenstand zu aktivieren.",
+  "detalj.pair.cta": "Chip verkn\u00fcpfen",
 };
 
 export default de;

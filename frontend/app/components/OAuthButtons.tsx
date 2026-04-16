@@ -37,6 +37,7 @@ export default function OAuthButtons({
   requireAccept = false,
   accepted = true,
   onRegistered,
+  redirectTo,
 }: {
   mode: "login" | "register";
   requireAccept?: boolean;
@@ -44,6 +45,8 @@ export default function OAuthButtons({
   /** Når satt (og mode="register") overtar forelder navigasjonen etter OAuth —
    *  brukes f.eks. for å vise posisjons-samtykke-steget før vi går til /hjem. */
   onRegistered?: (user: User) => void;
+  /** Intern sti å navigere til etter vellykket login (default /hjem). */
+  redirectTo?: string;
 }) {
   const { loginWithOAuth, setUser } = useAuth();
   const toast = useToast();
@@ -68,7 +71,7 @@ export default function OAuthButtons({
       setUser(user);
       onRegistered(user);
     } else {
-      await loginWithOAuth(provider, idToken, name, accepted);
+      await loginWithOAuth(provider, idToken, name, accepted, redirectTo);
     }
   }
 

@@ -440,6 +440,45 @@ const da: Record<string, string> = {
   "contact.privacy": "Privatlivsbeskyttelse",
   "contact.terms": "Vilk\u00e5r",
   "contact.home": "Forsiden",
+
+  // Par (NFC-chip via URL-tag eller manuel indtastning)
+  "pare.title": "Registrer S-TAG-chip",
+  "pare.subtitle": "Chippen er klar til at blive tilknyttet en af dine ting.",
+  "pare.chipUid": "Chip-ID",
+  "pare.createNew": "Opret ny ting",
+  "pare.createNewSub": "Registrer tingen og tilknyt chippen samme sted",
+  "pare.orPairExisting": "Eller tilknyt eksisterende",
+  "pare.noUnpaired": "Alle dine ting har allerede en chip. Opret en ny ting for at bruge denne chip.",
+  "pare.invalidTitle": "Ugyldigt link",
+  "pare.invalidBody": "Linket mangler et gyldigt chip-ID. Sørg for at scanne hele taget, eller kontakt S-TAG-support hvis problemet fortsætter.",
+  "pare.goHome": "G\u00e5 til forside",
+  "pare.successTitle": "Chip registreret",
+  "pare.successBody": "Chippen er nu tilknyttet \u00bb{0}\u00ab. Du kan se tingen i dit kartotek.",
+  "pare.successToast": "Chip registreret",
+  "pare.viewItem": "Se ting",
+  "pare.help": "Logget ind som {0}. Brug for hj\u00e6lp? G\u00e5 til Kontakt i menuen.",
+
+  // Par-modal (manuel/NFC-par fra tingsdetalje)
+  "pareModal.title": "Tilknyt chip",
+  "pareModal.subtitle": "Hold telefonen mod chippen, eller indtast chip-ID manuelt.",
+  "pareModal.scanNfc": "Scan chip med NFC",
+  "pareModal.scanning": "Venter p\u00e5 chip \u2026",
+  "pareModal.scanningHint": "Hold telefonen t\u00e6t p\u00e5 chippen.",
+  "pareModal.scanFailed": "Kunne ikke l\u00e6se chippen. Pr\u00f8v igen, eller indtast ID manuelt.",
+  "pareModal.nfcUnsupported": "NFC-scanning er ikke tilg\u00e6ngelig i denne browser.",
+  "pareModal.manualLabel": "Chip-ID",
+  "pareModal.manualPlaceholder": "F.eks. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Bogstaver og tal, minimum 4 tegn. ID\u2019et st\u00e5r som regel p\u00e5 emballagen eller m\u00e6rket.",
+  "pareModal.tooShort": "Chip-ID skal v\u00e6re mindst 4 tegn.",
+  "pareModal.pair": "Tilknyt",
+  "pareModal.pairing": "Tilknytter \u2026",
+  "pareModal.success": "Chip tilknyttet",
+
+  // Par-kort p\u00e5 tingsdetalje
+  "detalj.pair.label": "S-TAG-chip",
+  "detalj.pair.title": "Ingen chip registreret",
+  "detalj.pair.info": "Tilf\u00f8j en S-TAG-chip for at aktivere live-sporing og geofence-advarsler for denne ting.",
+  "detalj.pair.cta": "Tilknyt chip",
 };
 
 export default da;

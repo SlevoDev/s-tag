@@ -440,6 +440,45 @@ const en: Record<string, string> = {
   "contact.privacy": "Privacy",
   "contact.terms": "Terms",
   "contact.home": "Home",
+
+  // Pair (NFC chip via URL tag or manual entry)
+  "pare.title": "Register S-TAG chip",
+  "pare.subtitle": "The chip is ready to be linked to one of your items.",
+  "pare.chipUid": "Chip ID",
+  "pare.createNew": "Create new item",
+  "pare.createNewSub": "Register the item and link the chip in one step",
+  "pare.orPairExisting": "Or link to existing item",
+  "pare.noUnpaired": "All your items already have a chip. Create a new item to use this chip.",
+  "pare.invalidTitle": "Invalid link",
+  "pare.invalidBody": "The link is missing a valid chip ID. Make sure you scanned the full tag, or contact S-TAG support if the problem persists.",
+  "pare.goHome": "Go to home",
+  "pare.successTitle": "Chip registered",
+  "pare.successBody": "The chip is now linked to \u201c{0}\u201d. You can see the item in your registry.",
+  "pare.successToast": "Chip registered",
+  "pare.viewItem": "View item",
+  "pare.help": "Signed in as {0}. Need help? Go to Contact in the menu.",
+
+  // Pair modal (manual/NFC pairing from item detail)
+  "pareModal.title": "Link chip",
+  "pareModal.subtitle": "Hold your phone against the chip, or enter the chip ID manually.",
+  "pareModal.scanNfc": "Scan chip with NFC",
+  "pareModal.scanning": "Waiting for chip \u2026",
+  "pareModal.scanningHint": "Hold your phone close to the chip.",
+  "pareModal.scanFailed": "Could not read the chip. Try again or enter the ID manually.",
+  "pareModal.nfcUnsupported": "NFC scanning is not available in this browser.",
+  "pareModal.manualLabel": "Chip ID",
+  "pareModal.manualPlaceholder": "e.g. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Letters and numbers, minimum 4 characters. The ID is usually printed on the packaging or label.",
+  "pareModal.tooShort": "Chip ID must be at least 4 characters.",
+  "pareModal.pair": "Link",
+  "pareModal.pairing": "Linking \u2026",
+  "pareModal.success": "Chip linked",
+
+  // Pair card on item detail
+  "detalj.pair.label": "S-TAG chip",
+  "detalj.pair.title": "No chip registered",
+  "detalj.pair.info": "Add an S-TAG chip to enable live tracking and geofence alerts for this item.",
+  "detalj.pair.cta": "Link chip",
 };
 
 export default en;

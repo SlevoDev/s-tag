@@ -440,6 +440,45 @@ const nb: Record<string, string> = {
   "contact.privacy": "Personvern",
   "contact.terms": "Vilkår",
   "contact.home": "Forsiden",
+
+  // Pare (NFC-chip via URL-tag eller manuell input)
+  "pare.title": "Registrer S-TAG-chip",
+  "pare.subtitle": "Chipen er klar for å kobles til en av dine gjenstander.",
+  "pare.chipUid": "Chip-ID",
+  "pare.createNew": "Opprett ny gjenstand",
+  "pare.createNewSub": "Registrer gjenstanden og koble chipen på samme sted",
+  "pare.orPairExisting": "Eller koble til eksisterende",
+  "pare.noUnpaired": "Alle gjenstandene dine har allerede en chip. Opprett en ny gjenstand for å bruke denne chipen.",
+  "pare.invalidTitle": "Ugyldig lenke",
+  "pare.invalidBody": "Lenken mangler en gyldig chip-ID. Sjekk at du skannet hele taggen, eller kontakt S-TAG-support om problemet gjentar seg.",
+  "pare.goHome": "Gå til hjem",
+  "pare.successTitle": "Chip registrert",
+  "pare.successBody": "Chipen er nå koblet til «{0}». Du kan se gjenstanden i kartoteket ditt.",
+  "pare.successToast": "Chip registrert",
+  "pare.viewItem": "Se gjenstand",
+  "pare.help": "Innlogget som {0}. Trenger du hjelp? Gå til Kontakt i menyen.",
+
+  // Pare-modal (manuell/NFC-paring fra gjenstandsdetalj)
+  "pareModal.title": "Koble til chip",
+  "pareModal.subtitle": "Hold telefonen mot chipen eller skriv inn chip-ID-en manuelt.",
+  "pareModal.scanNfc": "Skann chip med NFC",
+  "pareModal.scanning": "Holder etter chip …",
+  "pareModal.scanningHint": "Hold telefonen inntil chipen.",
+  "pareModal.scanFailed": "Kunne ikke lese chipen. Prøv igjen eller skriv inn ID-en manuelt.",
+  "pareModal.nfcUnsupported": "NFC-skanning er ikke tilgjengelig i denne nettleseren.",
+  "pareModal.manualLabel": "Chip-ID",
+  "pareModal.manualPlaceholder": "F.eks. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Bokstaver og tall, minst 4 tegn. ID-en står som regel på emballasjen eller merket.",
+  "pareModal.tooShort": "Chip-ID må være minst 4 tegn.",
+  "pareModal.pair": "Koble til",
+  "pareModal.pairing": "Kobler til …",
+  "pareModal.success": "Chip koblet til",
+
+  // Pare-kort på gjenstandsdetalj
+  "detalj.pair.label": "S-TAG-chip",
+  "detalj.pair.title": "Ingen chip registrert",
+  "detalj.pair.info": "Legg til en S-TAG-chip for å aktivere live-sporing og geofence-varsling for denne gjenstanden.",
+  "detalj.pair.cta": "Koble til chip",
 };
 
 export default nb;

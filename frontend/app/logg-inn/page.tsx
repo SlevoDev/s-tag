@@ -1,15 +1,26 @@
 "use client";
-import { useState, FormEvent } from "react";
+import { Suspense, useState, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { useSearchParams } from "next/navigation";
 import { useAuth } from "../lib/auth-context";
 import { useTranslation } from "../lib/i18n";
 import OAuthButtons from "../components/OAuthButtons";
 
-export default function LoginPage() {
+export default function LoginPageWrapper() {
+  return (
+    <Suspense fallback={null}>
+      <LoginPage />
+    </Suspense>
+  );
+}
+
+function LoginPage() {
   const { login } = useAuth();
   const { t } = useTranslation();
+  const searchParams = useSearchParams();
+  const next = searchParams.get("next") || undefined;
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -20,12 +31,14 @@ export default function LoginPage() {
     setError(null);
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, next);
     } catch (err: any) {
       setError(err.message || "Kunne ikke logge inn");
       setLoading(false);
     }
   }
+
+  const registerHref = next ? `/registrer?next=${encodeURIComponent(next)}` : "/registrer";
 
   return (
     <div className="min-h-screen flex items-center justify-center px-6 bg-gradient-to-br from-slate-50 to-white">
@@ -83,11 +96,11 @@ export default function LoginPage() {
             </button>
           </form>
           <div className="mt-6">
-            <OAuthButtons mode="login" />
+            <OAuthButtons mode="login" redirectTo={next} />
           </div>
           <p className="mt-6 text-center text-sm text-slate-500">
             {t("login.noAccount")}{" "}
-            <Link href="/registrer" className="text-[#0f2a5c] font-bold hover:underline">
+            <Link href={registerHref} className="text-[#0f2a5c] font-bold hover:underline">
               {t("login.createAccount")}
             </Link>
           </p>

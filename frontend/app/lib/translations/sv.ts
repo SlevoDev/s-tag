@@ -440,6 +440,45 @@ const sv: Record<string, string> = {
   "contact.privacy": "Integritet",
   "contact.terms": "Villkor",
   "contact.home": "Startsidan",
+
+  // Para (NFC-chip via URL-tagg eller manuell inmatning)
+  "pare.title": "Registrera S-TAG-chip",
+  "pare.subtitle": "Chippet \u00e4r redo att kopplas till en av dina saker.",
+  "pare.chipUid": "Chip-ID",
+  "pare.createNew": "Skapa ny sak",
+  "pare.createNewSub": "Registrera saken och koppla chippet p\u00e5 samma st\u00e4lle",
+  "pare.orPairExisting": "Eller koppla till befintlig",
+  "pare.noUnpaired": "Alla dina saker har redan ett chip. Skapa en ny sak f\u00f6r att anv\u00e4nda detta chip.",
+  "pare.invalidTitle": "Ogiltig l\u00e4nk",
+  "pare.invalidBody": "L\u00e4nken saknar ett giltigt chip-ID. Kontrollera att du skannade hela taggen, eller kontakta S-TAG-support om problemet kvarst\u00e5r.",
+  "pare.goHome": "G\u00e5 till start",
+  "pare.successTitle": "Chip registrerat",
+  "pare.successBody": "Chippet \u00e4r nu kopplat till \u201d{0}\u201d. Du kan se saken i ditt register.",
+  "pare.successToast": "Chip registrerat",
+  "pare.viewItem": "Visa sak",
+  "pare.help": "Inloggad som {0}. Beh\u00f6ver du hj\u00e4lp? G\u00e5 till Kontakt i menyn.",
+
+  // Para-modal (manuell/NFC-par fr\u00e5n saksdetaljer)
+  "pareModal.title": "Koppla chip",
+  "pareModal.subtitle": "H\u00e5ll telefonen mot chippet eller skriv in chip-ID manuellt.",
+  "pareModal.scanNfc": "Skanna chip med NFC",
+  "pareModal.scanning": "V\u00e4ntar p\u00e5 chip \u2026",
+  "pareModal.scanningHint": "H\u00e5ll telefonen n\u00e4ra chippet.",
+  "pareModal.scanFailed": "Kunde inte l\u00e4sa chippet. F\u00f6rs\u00f6k igen eller ange ID manuellt.",
+  "pareModal.nfcUnsupported": "NFC-skanning \u00e4r inte tillg\u00e4nglig i denna webbl\u00e4sare.",
+  "pareModal.manualLabel": "Chip-ID",
+  "pareModal.manualPlaceholder": "T.ex. 04A3B9C2D1E5F8",
+  "pareModal.manualHint": "Bokst\u00e4ver och siffror, minst 4 tecken. ID:t st\u00e5r oftast p\u00e5 f\u00f6rpackningen eller etiketten.",
+  "pareModal.tooShort": "Chip-ID m\u00e5ste vara minst 4 tecken.",
+  "pareModal.pair": "Koppla",
+  "pareModal.pairing": "Kopplar \u2026",
+  "pareModal.success": "Chip kopplat",
+
+  // Para-kort p\u00e5 saksdetaljer
+  "detalj.pair.label": "S-TAG-chip",
+  "detalj.pair.title": "Inget chip registrerat",
+  "detalj.pair.info": "L\u00e4gg till ett S-TAG-chip f\u00f6r att aktivera live-sp\u00e5rning och geofence-varningar f\u00f6r denna sak.",
+  "detalj.pair.cta": "Koppla chip",
 };
 
 export default sv;

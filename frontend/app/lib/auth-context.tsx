@@ -6,18 +6,28 @@ import { auth, setToken, getToken, User } from "./api";
 type AuthContextValue = {
   user: User | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string, name: string) => Promise<void>;
+  login: (email: string, password: string, redirectTo?: string) => Promise<void>;
+  register: (email: string, password: string, name: string, redirectTo?: string) => Promise<void>;
   loginWithOAuth: (
     provider: "google" | "apple",
     idToken: string,
     name?: string,
-    acceptTerms?: boolean
+    acceptTerms?: boolean,
+    redirectTo?: string
   ) => Promise<void>;
   logout: () => void;
   refreshUser: () => Promise<void>;
   setUser: (user: User | null) => void;
 };
+
+// Bare tillat interne stier — hindrer åpen redirect-angrep hvor en lenke
+// i f.eks. en tag kan peke et innlogget offer til en ekstern phishing-side.
+function sanitizeRedirect(raw: string | null | undefined): string | null {
+  if (!raw) return null;
+  if (!raw.startsWith("/")) return null;
+  if (raw.startsWith("//")) return null;
+  return raw;
+}
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 
@@ -60,7 +70,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       PUBLIC_ROUTES.includes(pathname) ||
       PUBLIC_PREFIXES.some((p) => pathname.startsWith(p));
     if (!user && !isPublic) {
-      router.replace("/logg-inn");
+      const next = `${pathname}${typeof window !== "undefined" ? window.location.search : ""}`;
+      const safeNext = sanitizeRedirect(next);
+      router.replace(safeNext ? `/logg-inn?next=${encodeURIComponent(safeNext)}` : "/logg-inn");
     }
   }, [user, loading, pathname, router]);
 
@@ -73,30 +85,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string, redirectTo?: string) => {
     const { token, user } = await auth.login(email, password);
     setToken(token);
     setUser(user);
-    router.replace("/hjem");
+    router.replace(sanitizeRedirect(redirectTo) || "/hjem");
   };
 
-  const register = async (email: string, password: string, name: string) => {
+  const register = async (email: string, password: string, name: string, redirectTo?: string) => {
     const { token, user } = await auth.register(email, password, name);
     setToken(token);
     setUser(user);
-    router.replace("/hjem");
+    router.replace(sanitizeRedirect(redirectTo) || "/hjem");
   };
 
   const loginWithOAuth = async (
     provider: "google" | "apple",
     idToken: string,
     name?: string,
-    acceptTerms = false
+    acceptTerms = false,
+    redirectTo?: string
   ) => {
     const { token, user } = await auth.oauth(provider, idToken, name, acceptTerms);
     setToken(token);
     setUser(user);
-    router.replace("/hjem");
+    router.replace(sanitizeRedirect(redirectTo) || "/hjem");
   };
 
   const logout = () => {
