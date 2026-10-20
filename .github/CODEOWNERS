@@ -2,5 +2,5 @@
 # Alle endringer skal automatisk be om review fra eieren(e) listet her.
 # Se https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
 
-# Standard: alle filer — begge grunnleggere må kunne approve
-*   @eliahslette @JonahSlette
+# Prosjektet er overlevert. Legg inn ny eiers GitHub-brukernavn her, f.eks.:
+# *   @brukernavn
