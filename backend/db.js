@@ -898,7 +898,21 @@ async function acceptTransfer(transferId, newOwnerId, buyerName) {
         [transferId, buyerName || null]
       );
       if (t.rows[0]) {
-        await client.query(`UPDATE items SET owner_id=$1 WHERE id=$2`, [newOwnerId, t.rows[0].item_id]);
+        const itemId = t.rows[0].item_id;
+        // Ny eier: ny offentlig kode (gammel QR/lapp skal ikke lenger peke
+        // til gjenstanden), og selgers lost-status/hjemme-sone nullstilles.
+        await client.query(
+          `UPDATE items
+              SET owner_id=$1, public_code=$2, status='secured', lost_message=NULL,
+                  home_lat=NULL, home_lng=NULL, geofence_radius_m=NULL, geofence_alerted=FALSE
+            WHERE id=$3`,
+          [newOwnerId, newPublicCode(), itemId]
+        );
+        await client.query(`UPDATE chips SET claimed_by=$1 WHERE item_id=$2`, [newOwnerId, itemId]);
+        await client.query(
+          `UPDATE transfers SET status='cancelled' WHERE item_id=$1 AND status='pending' AND id<>$2`,
+          [itemId, transferId]
+        );
       } else {
         // Allerede akseptert eller kansellert — returnér nåværende rad uendret
         const cur = await client.query(`SELECT * FROM transfers WHERE id=$1`, [transferId]);
@@ -917,14 +931,48 @@ async function acceptTransfer(transferId, newOwnerId, buyerName) {
   const d = jsonLoad();
   const t = d.transfers.find((x) => x.id === transferId);
   if (!t) return null;
+  if (t.status !== "pending") return t;
   t.status = "accepted";
   t.acceptedAt = new Date().toISOString();
   t.buyerConfirmedAt = t.acceptedAt;
   if (buyerName) t.buyerName = buyerName;
   const itemIdx = d.items.findIndex((i) => i.id === t.itemId);
-  if (itemIdx !== -1) d.items[itemIdx].ownerId = newOwnerId;
+  if (itemIdx !== -1) {
+    Object.assign(d.items[itemIdx], {
+      ownerId: newOwnerId,
+      publicCode: newPublicCode(),
+      status: "secured",
+      lostMessage: null,
+      homeLat: null,
+      homeLng: null,
+      geofenceRadiusM: null,
+      geofenceAlerted: false,
+    });
+  }
+  for (const c of d.chips) if (c.itemId === t.itemId) c.claimedBy = newOwnerId;
+  for (const other of d.transfers) {
+    if (other.itemId === t.itemId && other.id !== t.id && other.status === "pending") {
+      other.status = "cancelled";
+    }
+  }
   jsonSave(d);
   return t;
+}
+
+function newPublicCode() {
+  return crypto.randomBytes(4).toString("hex").toUpperCase();
+}
+
+async function findPendingTransferForItem(itemId) {
+  if (USE_PG) {
+    const r = await pool.query(
+      `SELECT * FROM transfers WHERE item_id=$1 AND status='pending' LIMIT 1`,
+      [itemId]
+    );
+    return mapTransfer(r.rows[0]);
+  }
+  const d = jsonLoad();
+  return d.transfers.find((t) => t.itemId === itemId && t.status === "pending") || null;
 }
 
 async function setTransferSignature(transferId, role, { jwt, sub, name, signedAt }) {
@@ -1030,10 +1078,20 @@ async function touchUserLastSeen(userId) {
 
 async function deleteUser(userId) {
   if (USE_PG) {
+    // Frigi chipene først — ellers blir de stående som 'claimed' uten item
+    // (item_id settes NULL via FK) og kan aldri registreres på nytt.
+    await pool.query(
+      `UPDATE chips SET status='available', claimed_by=NULL, claimed_at=NULL, item_id=NULL
+        WHERE claimed_by = $1`,
+      [userId]
+    );
     await pool.query(`DELETE FROM users WHERE id = $1`, [userId]);
     return true;
   }
   const d = jsonLoad();
+  for (const c of d.chips) {
+    if (c.claimedBy === userId) Object.assign(c, { status: "available", claimedBy: null, claimedAt: null, itemId: null });
+  }
   d.users = d.users.filter((u) => u.id !== userId);
   d.items = d.items.filter((i) => i.ownerId !== userId);
   d.transfers = d.transfers.filter((t) => t.fromUserId !== userId);
@@ -1316,6 +1374,7 @@ module.exports = {
   getChipByUid, listChips, createChip, bulkCreateChips, claimChip, releaseChip, countChips,
   markChipPinged, checkGeofence, markGeofenceAlerted,
   listTransfersForUser, createTransfer, getTransfer, acceptTransfer, setTransferSignature,
+  findPendingTransferForItem,
   createNotification, listNotifications, markNotificationRead, markAllNotificationsRead, deleteAllNotifications, countUnreadNotifications,
   createItemEvent, listItemEvents,
   getUserStats,

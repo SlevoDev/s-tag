@@ -127,8 +127,9 @@ export default function MapView({ items, selectedId, flyTo, userPosition }: MapV
       zoomControl={false}
     >
       <TileLayer
-        attribution='&copy; OpenStreetMap contributors'
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+        attribution='&copy; <a href="https://www.kartverket.no/">Kartverket</a>'
+        url="https://cache.kartverket.no/v1/wmts/1.0.0/topograatone/default/webmercator/{z}/{y}/{x}.png"
+        maxZoom={18}
       />
       <MapController items={items} selectedId={selectedId} flyTo={flyTo} />
       {userPosition && (

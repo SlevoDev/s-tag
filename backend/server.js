@@ -634,12 +634,6 @@ app.get("/api/items", requireAuth, h(async (req, res) => {
   res.json(items);
 }));
 
-app.get("/api/items/:id", requireAuth, h(async (req, res) => {
-  const item = await db.getItem(req.params.id, req.userId);
-  if (!item) return res.status(404).json({ error: "Not found" });
-  res.json(item);
-}));
-
 // Kontrollerer om chip-registeret skal håndheves. I produksjon er dette
 // alltid PÅ. Lokalt (JSON-store uten DATABASE_URL) er det AV som default så
 // utviklere slipper å seede registeret — override med STRICT_CHIP_REGISTER=1.
@@ -647,6 +641,39 @@ const STRICT_CHIP_REGISTER =
   process.env.STRICT_CHIP_REGISTER === "1" ||
   process.env.STRICT_CHIP_REGISTER === "true" ||
   IS_PRODUCTION;
+
+// Sjekk om en S-TAG-kode er ledig (brukes av registrerings-wizard for live validering)
+// Returnerer { available, reason } slik at frontend kan vise forskjell på
+// "finnes ikke i registeret" vs "allerede registrert på en konto".
+// MÅ ligge før /api/items/:id, ellers fanges den av :id-ruta.
+app.get("/api/items/code-available", requireAuth, h(async (req, res) => {
+  const code = String(req.query.code || "").trim().toUpperCase();
+  if (!code) return res.status(400).json({ error: "code required" });
+  if (code.length < 4 || code.length > 64) {
+    return res.status(400).json({ error: "Ugyldig kodelengde" });
+  }
+  if (!/^[A-Z0-9-]+$/.test(code)) {
+    return res.status(400).json({ error: "Ugyldige tegn i kode" });
+  }
+  const existing = await db.findItemByChipUid(code);
+  if (existing) return res.json({ available: false, reason: "already_registered" });
+
+  if (STRICT_CHIP_REGISTER) {
+    const chip = await db.getChipByUid(code);
+    if (!chip) return res.json({ available: false, reason: "not_in_register" });
+    if (chip.status === "disabled") return res.json({ available: false, reason: "disabled" });
+    if (chip.status === "claimed")  return res.json({ available: false, reason: "already_registered" });
+  }
+
+  res.json({ available: true });
+}));
+
+app.get("/api/items/:id", requireAuth, h(async (req, res) => {
+  const item = await db.getItem(req.params.id, req.userId);
+  if (!item) return res.status(404).json({ error: "Not found" });
+  res.json(item);
+}));
+
 
 app.post("/api/items", requireAuth, h(async (req, res) => {
   const body = req.body || {};
@@ -739,35 +766,23 @@ app.post("/api/items", requireAuth, h(async (req, res) => {
   res.status(201).json(saved);
 }));
 
-// Sjekk om en S-TAG-kode er ledig (brukes av registrerings-wizard for live validering)
-// Returnerer { available, reason } slik at frontend kan vise forskjell på
-// "finnes ikke i registeret" vs "allerede registrert på en konto".
-app.get("/api/items/code-available", requireAuth, h(async (req, res) => {
-  const code = String(req.query.code || "").trim().toUpperCase();
-  if (!code) return res.status(400).json({ error: "code required" });
-  if (code.length < 4 || code.length > 64) {
-    return res.status(400).json({ error: "Ugyldig kodelengde" });
-  }
-  if (!/^[A-Z0-9-]+$/.test(code)) {
-    return res.status(400).json({ error: "Ugyldige tegn i kode" });
-  }
-  const existing = await db.findItemByChipUid(code);
-  if (existing) return res.json({ available: false, reason: "already_registered" });
-
-  if (STRICT_CHIP_REGISTER) {
-    const chip = await db.getChipByUid(code);
-    if (!chip) return res.json({ available: false, reason: "not_in_register" });
-    if (chip.status === "disabled") return res.json({ available: false, reason: "disabled" });
-    if (chip.status === "claimed")  return res.json({ available: false, reason: "already_registered" });
-  }
-
-  res.json({ available: true });
-}));
+// Felter eieren selv kan endre via PATCH. Chip-, status-, posisjons- og
+// kodefelter styres kun av egne endepunkter (chip/pair, lost/found, ping)
+// så chip-registeret ikke kan omgås.
+const ITEM_EDITABLE_FIELDS = [
+  "name", "category", "description", "serialNumber", "brand", "model",
+  "color", "valueNok", "purchasedAt", "photoUrl", "receiptUrl",
+];
 
 app.patch("/api/items/:id", requireAuth, h(async (req, res) => {
-  const updated = await db.updateItem(req.params.id, req.userId, req.body || {});
+  const patch = {};
+  for (const k of ITEM_EDITABLE_FIELDS) if (req.body?.[k] !== undefined) patch[k] = req.body[k];
+  if (patch.name !== undefined && !String(patch.name).trim()) {
+    return res.status(400).json({ error: "Navn kan ikke være tomt" });
+  }
+  const updated = await db.updateItem(req.params.id, req.userId, patch);
   if (!updated) return res.status(404).json({ error: "Not found" });
-  await db.createItemEvent({ itemId: updated.id, userId: req.userId, kind: "updated", detail: Object.keys(req.body || {}).join(", ") });
+  await db.createItemEvent({ itemId: updated.id, userId: req.userId, kind: "updated", detail: Object.keys(patch).join(", ") });
   res.json(updated);
 }));
 
@@ -1117,21 +1132,52 @@ app.get("/api/feedback", requireAuth, h(async (req, res) => {
 // ============================================================================
 
 app.post("/api/chip/pair", requireAuth, h(async (req, res) => {
-  const { itemId, chipUid } = req.body || {};
+  const { itemId } = req.body || {};
+  const chipUid = String(req.body?.chipUid || "").trim().toUpperCase();
   if (!itemId || !chipUid) return res.status(400).json({ error: "itemId og chipUid er påkrevd" });
+  if (!/^[A-Z0-9-]{6,64}$/.test(chipUid)) {
+    return res.status(400).json({ error: "Ugyldig chip-ID" });
+  }
+  const item = await db.getItem(itemId, req.userId);
+  if (!item) return res.status(404).json({ error: "Gjenstand ikke funnet" });
+  if (item.chipUid === chipUid) return res.json(item);
+
   const conflict = await db.findItemByChipUid(chipUid);
-  if (conflict && conflict.id !== itemId) {
+  if (conflict) {
     return res.status(409).json({ error: "Denne chippen er allerede paret med en annen gjenstand" });
   }
-  const updated = await db.pairChip(itemId, req.userId, chipUid);
-  if (!updated) return res.status(404).json({ error: "Gjenstand ikke funnet" });
+
+  // Samme whitelist-regler som ved registrering i /api/items
+  if (STRICT_CHIP_REGISTER) {
+    const claim = await db.claimChip(chipUid, req.userId, item.id);
+    if (!claim.ok) {
+      const msg = {
+        not_in_register: "Ukjent S-TAG-kode",
+        disabled: "Denne S-TAG-chipen er deaktivert. Kontakt support.",
+        already_claimed: "Denne S-TAG-chipen er allerede registrert på en annen konto.",
+      }[claim.reason] || "Kunne ikke reservere S-TAG-chipen";
+      return res.status(409).json({ error: msg });
+    }
+  }
+
+  const previousUid = item.chipUid;
+  const updated = await db.pairChip(item.id, req.userId, chipUid);
+  if (previousUid && STRICT_CHIP_REGISTER) {
+    try { await db.releaseChip(previousUid); } catch {}
+  }
+  await db.createItemEvent({ itemId: item.id, userId: req.userId, kind: "chip_paired", detail: chipUid });
   res.json(updated);
 }));
 
 app.post("/api/chip/unpair", requireAuth, h(async (req, res) => {
   const { itemId } = req.body || {};
-  const updated = await db.unpairChip(itemId, req.userId);
-  if (!updated) return res.status(404).json({ error: "Gjenstand ikke funnet" });
+  const item = await db.getItem(itemId, req.userId);
+  if (!item) return res.status(404).json({ error: "Gjenstand ikke funnet" });
+  const updated = await db.unpairChip(item.id, req.userId);
+  if (item.chipUid && STRICT_CHIP_REGISTER) {
+    try { await db.releaseChip(item.chipUid); } catch {}
+  }
+  await db.createItemEvent({ itemId: item.id, userId: req.userId, kind: "chip_unpaired", detail: item.chipUid });
   res.json(updated);
 }));
 
@@ -1470,6 +1516,14 @@ app.post("/api/transfers", requireAuth, h(async (req, res) => {
 
   const seller = await db.findUserById(req.userId);
   if (!seller) return res.status(404).json({ error: "Bruker ikke funnet" });
+  if (emailNorm === seller.email) {
+    return res.status(400).json({ error: "Du kan ikke overføre en gjenstand til deg selv" });
+  }
+  if (await db.findPendingTransferForItem(item.id)) {
+    return res.status(409).json({
+      error: "Det finnes allerede et ventende eierskifte for denne gjenstanden.",
+    });
+  }
 
   const transfer = {
     id: crypto.randomUUID(),

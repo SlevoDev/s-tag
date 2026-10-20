@@ -117,8 +117,17 @@ Glem ALDRI steg 3. Branch protection skal alltid være aktiv når du er ferdig.
 
 | Tjeneste | URL | Plattform |
 |----------|-----|-----------|
-| Frontend | https://s-tag-ten.vercel.app | Vercel |
-| Backend  | https://s-tag-production.up.railway.app | Railway |
+> **Overlevering (oktober 2026):** Prosjektet flyttes til ny eiers egne kontoer
+> (GitHub, Vercel, Railway). De gamle adressene under er fra før overleveringen —
+> den gamle Railway-backenden finnes ikke lenger. Oppdater tabellen med de nye
+> adressene når de er satt opp, og sett alltid `NEXT_PUBLIC_API_URL` (Vercel)
+> og `APP_BASE_URL` (Railway) eksplisitt, siden kodens fallback-verdier peker
+> til de gamle adressene.
+
+| Tjeneste | URL | Plattform |
+|----------|-----|-----------|
+| Frontend | https://s-tag-ten.vercel.app (gammel) | Vercel |
+| Backend  | https://s-tag-production.up.railway.app (gammel, nede) | Railway |
 | Database | PostgreSQL | Railway (tilkoblet via DATABASE_URL) |
 
 ### Railway miljøvariabler
@@ -147,7 +156,7 @@ Glem ALDRI steg 3. Branch protection skal alltid være aktiv når du er ferdig.
 
 | Secret | Beskrivelse |
 |--------|-------------|
-| `RAILWAY_TOKEN` | Railway API-token for auto-deploy via GitHub Actions. Satt opp 2026-04-09. |
+| `RAILWAY_TOKEN` | Railway **project token** for auto-deploy via GitHub Actions. Må lages på nytt fra ny eiers Railway-prosjekt (Project Settings → Tokens). Railway-tjenesten må hete `s-tag`. |
 
 ## Deploy (CI/CD)
 
@@ -205,7 +214,7 @@ Oppdater denne seksjonen når du fullfører arbeid eller oppdager nye problemer.
 
 - **Resend e-post:** `onboarding@resend.dev` er en test-avsender som kun kan sende til kontoeier. Trenger eget domene.
 - **Apple-innlogging:** Ikke konfigurert. Trenger Apple Developer Program.
-- **schema.sql:** Endringer kan ødelegge eksisterende data. Ikke endre uten eksplisitt godkjenning fra Eliah.
+- **schema.sql:** Endringer kan ødelegge eksisterende data. Ikke endre uten eksplisitt godkjenning fra prosjekteier.
 - **Next.js 16:** Har breaking changes fra tidligere versjoner. Les `frontend/AGENTS.md` før du skriver frontend-kode.
 - **Samtykke-toggles:** Posisjon fungerer (styrer GPS). E-post-varsler, push-varsler og markedsføring lagres i DB men har ingen effekt ennå (mangler domene/push-infra). Ikke fjern dem — de er GDPR-samtykke som trengs når funksjonene implementeres.
 - **i18n:** Alle UI-strenger bruker `t()` fra `app/lib/i18n.tsx`. Nye sider MÅ bruke `useTranslation()` og legge nye nøkler i ALLE 7 oversettelsesfiler. Norsk (nb) er fallback — manglende nøkler i andre språk viser norsk tekst.
@@ -226,5 +235,4 @@ cd frontend && npm install && npm run dev
 
 ## Team
 
-- **Eliah** (@eliahslette) — Grunnlegger, hovedutvikler, godkjenner alle PRs
-- **Jonah** (@JonahSlette) — Medgrunnlegger, bidragsyter via Claude Code
+- Prosjektet er overlevert til ny eier (oktober 2026). Eliah og Jonah er ikke lenger involvert.
